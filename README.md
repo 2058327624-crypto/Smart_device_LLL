@@ -1,6 +1,6 @@
-# 智能桌面终端 (Smart Device LLL)
+# 多功能智能终端 (Smart Device LLL)
 
-基于 **ESP32-S3** 的多功能桌面小终端。一块 320×240 触摸屏 + 语音助手 + SD 卡音乐播放器 + 天气/时钟/日历，全部跑在 FreeRTOS 上。
+基于 **ESP32-S3** 的多功能智能终端。一块 320×240 触摸屏 + 语音助手 + SD 卡音乐播放器 + 天气/时钟/日历，全部跑在 FreeRTOS 上。
 
 ![平台](https://img.shields.io/badge/Platform-ESP32--S3-blue)
 ![框架](https://img.shields.io/badge/Framework-Arduino-00979D)
@@ -51,7 +51,7 @@
 | 元件 | 型号 | 数量 | 说明 |
 | --- | --- | --- | --- |
 | 主控 | **ESP32-S3-DevKitC-1** (N16R8) | 1 | 16MB Flash + 8MB **Octal PSRAM** |
-| 屏幕 | **ILI9341** 2.8" SPI TFT，320×240 | 1 | 带 **XPT2046** 电阻触摸 |
+| 屏幕 | **ILI9341**  SPI TFT，320×240 | 1 | 带 **XPT2046** 电阻触摸 |
 | 麦克风 | **INMP441** | 1 | I2S 数字麦克风 |
 | 功放 | **NS4168** | 1 | I2S 数字功放，接 4Ω/8Ω 喇叭 |
 | 喇叭 | 4Ω 3W 或 8Ω 1W | 1 | — |
