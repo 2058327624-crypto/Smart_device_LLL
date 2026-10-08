@@ -1,6 +1,9 @@
 # ---- 私有凭据：绝对不要提交 ----
 include/secrets.h
 
+# ---- 本地资料：不公开 ----
+Smart_device_LLL_项目详解.docx
+
 # ---- PlatformIO 构建产物与依赖 ----
 .pio
 .pioenvs
