@@ -17,16 +17,13 @@ static char s_track_name[MUSIC_MAX_TRACKS][MUSIC_NAME_MAX];
 static int  s_track_count = 0;
 static int  s_current     = -1;   // 当前曲目序号，-1 = 未播放
 
-// 跨任务请求标志，见 My_audio.h 的说明
-volatile int g_audio_cmd       = AUDIO_CMD_NONE;
-volatile int g_audio_req_index = 0;
-volatile int g_audio_req_vol   = AUDIO_VOLUME_MAX;
-volatile int g_audio_req_play  = 0;   // 1=选中后立即播放，0=只选中不出声
 
 void My_audio_init() {
     // 初始化音频播放相关的设置
     audio.setPinout(I2S_BCLK, I2S_LRC, I2S_DOUT);
     audio.setVolume(AUDIO_VOLUME_MAX);
+    // 状态层里给的是 0，音量请求的初值在这里补上，免得第一次静音
+    g_audio_req_vol = AUDIO_VOLUME_MAX;
 }
 
 void audio_loop() {
@@ -34,7 +31,7 @@ void audio_loop() {
     audio.loop();
 }
 
-// 判断文件名是否以 .mp3 结尾（不区分大小写）
+// 判断文件名是否以 .mp3 结尾
 static bool has_mp3_ext(const char* name)
 {
     size_t len = strlen(name);
@@ -49,8 +46,7 @@ static bool has_mp3_ext(const char* name)
 int music_scan(void)
 {
     s_track_count = 0;
-    s_current     = -1;
-
+    // 检查 SD 卡是否挂载
     if(!g_sdcard.isMounted()) return 0;
 
     // 只扫根目录。放子目录里的话这里扫不到，需要的话再改成递归。
@@ -89,6 +85,10 @@ int music_scan(void)
     if(entry) entry.close();
     root.close();
     SD_UNLOCK();
+
+    /* 换了卡或删了歌之后曲目表可能变短，把越界的播放位置清掉，
+     * 免得后面按索引取曲目/歌名时越界。 */
+    if(s_current >= s_track_count) s_current = -1;
 
     return s_track_count;
 }
@@ -138,7 +138,24 @@ void audio_request_volume(int vol)
     g_audio_cmd = AUDIO_CMD_VOLUME;
 }
 
+/* 播放一段网络音频*/
+void audio_request_tts(const char* url)
+{
+    if(url == nullptr || url[0] == '\0') return;
+    size_t len = strlen(url);
+    if(len >= sizeof(g_audio_req_tts_url))
+    {
+        Serial.printf("[音频] !! TTS URL 过长(%u 字节, 上限 %u), 已截断 —— "
+                      "语音会不完整或没有声音\n",
+                      (unsigned)len, (unsigned)sizeof(g_audio_req_tts_url) - 1);
+    }
 
+    strncpy(g_audio_req_tts_url, url, sizeof(g_audio_req_tts_url) - 1);
+    g_audio_req_tts_url[sizeof(g_audio_req_tts_url) - 1] = '\0';
+    g_audio_cmd = AUDIO_CMD_TTS_URL;
+}
+
+// 是否正在播放
 int audio_is_playing(void)
 {
     return audio.isRunning() ? 1 : 0;
@@ -149,15 +166,13 @@ int audio_volume_max(void)
     return AUDIO_VOLUME_MAX;
 }
 
-// 是否还有没被 audio_task 执行的请求挂着。
-// UI 侧用它来判断"指令刚发出去、还没生效"，此时不能拿 isRunning()
-// 去否定用户的意图——那会把开关又弹回去。
+//判断是否有还有未被处理的请求挂起
 int audio_request_pending(void)
 {
     return (g_audio_cmd != AUDIO_CMD_NONE) ? 1 : 0;
 }
 
-
+// 处理所有挂起的请求
 void audio_process_requests(void)
 {
     int cmd = g_audio_cmd;
@@ -167,9 +182,7 @@ void audio_process_requests(void)
     g_audio_cmd = AUDIO_CMD_NONE;
 
     switch(cmd) {
-    // 选曲。是否出声由 g_audio_req_play 决定：
-    // 0 = 只装载这首、保持暂停（等用户打开开关再放），
-    // 1 = 装载后立刻播放。
+    // 播放指定索引的曲目。
     case AUDIO_CMD_PLAY_INDEX: {
         int idx = g_audio_req_index;
         if(idx < 0 || idx >= s_track_count) break;
@@ -182,13 +195,7 @@ void audio_process_requests(void)
 
         if(ok) {
             s_current = idx;
-            // connecttoSD 内部会把 m_f_running 置 true，
-            // 若这次只想装载不出声，立刻切回暂停。
-            // pauseResume() 是纯软件状态切换（只翻 m_f_running），不碰 I2S。
             if(!wantPlay && audio.isRunning()) audio.pauseResume();
-
-            Serial.printf("[音频] %s第 %d 首: %s\n",
-                          wantPlay ? "播放" : "选中", idx, s_track_name[idx]);
         } else {
             Serial.printf("[音频] 装载失败: %s\n", s_track_path[idx]);
         }
@@ -201,15 +208,8 @@ void audio_process_requests(void)
         if(audio.isRunning()) audio.pauseResume();
         break;
 
-    // 恢复播放。
-    //
-    // 这里【不能】直接 pauseResume()：那个接口只是翻一下 m_f_running 标志，
-    // 而一首歌播完后 stopSong() 已经把解码器和音频文件都关掉了，
-    // 此时翻标志位没有任何声音出来——表现就是"打开开关有时候不唱"。
-    // 所以统一走 connecttoSD() 重新装载，它会调 setDefaults() 把
-    // 解码器、缓冲区、文件位置全部重置，不管之前是暂停还是已播完都能正确开播。
     case AUDIO_CMD_RESUME: {
-        if(audio.isRunning()) break;          // 已经在放，什么都不用做
+        if(audio.isRunning()) break;
 
         // 没选过歌就用第一首；一首都没有就什么都不做
         int idx = (s_current >= 0) ? s_current : ((s_track_count > 0) ? 0 : -1);
@@ -221,13 +221,19 @@ void audio_process_requests(void)
 
         if(ok) {
             s_current = idx;
-            Serial.printf("[音频] 播放第 %d 首: %s\n", idx, s_track_name[idx]);
         }
         break;
     }
 
     case AUDIO_CMD_VOLUME:
         audio.setVolume((uint8_t)g_audio_req_vol);
+        break;
+
+    // 小智的语音回答。先停掉当前正在放的（可能是歌），再连网播。
+    // 这两步必须是同一个任务里连着做，否则会有两个任务同时碰解码器。
+    case AUDIO_CMD_TTS_URL:
+        audio.stopSong();
+        audio.connecttohost(g_audio_req_tts_url);
         break;
 
     default:

@@ -39,7 +39,8 @@ lv_obj_t * ui_Label7;
 lv_obj_t * ui_Label8;
 lv_obj_t * ui_Label9;
 lv_obj_t * ui_Label10;
-lv_obj_t * ui_TextArea4;
+lv_obj_t * ui_Label2;
+lv_obj_t * ui_Image25;
 // CUSTOM VARIABLES
 
 // SCREEN: ui_xiaozhiPage
@@ -50,6 +51,7 @@ lv_obj_t * ui_Image11;
 lv_obj_t * ui_Image12;
 void ui_event_Switch1(lv_event_t * e);
 lv_obj_t * ui_Switch1;
+lv_obj_t * ui_TextArea5;
 // CUSTOM VARIABLES
 
 // SCREEN: ui_MusicPage
@@ -57,17 +59,12 @@ void ui_MusicPage_screen_init(void);
 lv_obj_t * ui_MusicPage;
 void ui_event_Image13(lv_event_t * e);
 lv_obj_t * ui_Image13;
-void ui_event_slidervolume(lv_event_t * e);
-lv_obj_t * ui_slidervolume;
+lv_obj_t * ui_Slider1;
 lv_obj_t * ui_Image14;
-void ui_event_ddsonglist(lv_event_t * e);
-lv_obj_t * ui_ddsonglist;
-void ui_event_btnplaypause(lv_event_t * e);
-lv_obj_t * ui_btnplaypause;
-void ui_event_btnprev(lv_event_t * e);
-lv_obj_t * ui_btnprev;
-void ui_event_btnnext(lv_event_t * e);
-lv_obj_t * ui_btnnext;
+lv_obj_t * ui_Roller4;
+lv_obj_t * ui_Switch2;
+lv_obj_t * ui_Image3;
+lv_obj_t * ui_Image4;
 // CUSTOM VARIABLES
 
 // SCREEN: ui_SettingsPage
@@ -102,6 +99,7 @@ void ui_event_Image19(lv_event_t * e);
 lv_obj_t * ui_Image19;
 void ui_event_Calendar1(lv_event_t * e);
 lv_obj_t * ui_Calendar1;
+lv_obj_t * ui_Image9;
 // CUSTOM VARIABLES
 
 // SCREEN: ui_StatementPage
@@ -110,15 +108,19 @@ lv_obj_t * ui_StatementPage;
 void ui_event_Image20(lv_event_t * e);
 lv_obj_t * ui_Image20;
 lv_obj_t * ui_Label11;
-lv_obj_t * ui_Image3;
 // CUSTOM VARIABLES
 
 // SCREEN: ui_WeatherPage
 void ui_WeatherPage_screen_init(void);
 lv_obj_t * ui_WeatherPage;
+lv_obj_t * ui_Panel3;
+lv_obj_t * ui_Panel4;
+lv_obj_t * ui_Image10;
+lv_obj_t * ui_Label1;
+lv_obj_t * ui_Panel5;
+lv_obj_t * ui_Roller6;
 void ui_event_Image21(lv_event_t * e);
 lv_obj_t * ui_Image21;
-lv_obj_t * ui_Roller6;
 // CUSTOM VARIABLES
 
 // SCREEN: ui_SerialPortPage
@@ -247,51 +249,6 @@ void ui_event_Image13(lv_event_t * e)
 
     if(event_code == LV_EVENT_CLICKED) {
         _ui_screen_change(&ui_Home, LV_SCR_LOAD_ANIM_FADE_ON, 500, 0, &ui_Home_screen_init);
-    }
-}
-
-void ui_event_slidervolume(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_VALUE_CHANGED) {
-        on_volume_change(e);
-    }
-}
-
-void ui_event_ddsonglist(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_VALUE_CHANGED) {
-        on_song_select(e);
-    }
-}
-
-void ui_event_btnplaypause(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        on_btn_play_pause(e);
-    }
-}
-
-void ui_event_btnprev(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        on_btn_prev(e);
-    }
-}
-
-void ui_event_btnnext(lv_event_t * e)
-{
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-    if(event_code == LV_EVENT_CLICKED) {
-        on_btn_next(e);
     }
 }
 

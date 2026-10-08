@@ -20,23 +20,22 @@ void ui_MusicPage_screen_init(void)
     lv_obj_add_flag(ui_Image13, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
     lv_obj_clear_flag(ui_Image13, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
-    ui_slidervolume = lv_slider_create(ui_MusicPage);
-    lv_slider_set_value(ui_slidervolume, 60, LV_ANIM_OFF);
-    if(lv_slider_get_mode(ui_slidervolume) == LV_SLIDER_MODE_RANGE) lv_slider_set_left_value(ui_slidervolume, 0,
-                                                                                                 LV_ANIM_OFF);
-    lv_obj_set_width(ui_slidervolume, 181);
-    lv_obj_set_height(ui_slidervolume, 27);
-    lv_obj_set_x(ui_slidervolume, 6);
-    lv_obj_set_y(ui_slidervolume, -93);
-    lv_obj_set_align(ui_slidervolume, LV_ALIGN_CENTER);
-    lv_obj_set_style_bg_color(ui_slidervolume, lv_color_hex(0xDDA7A7), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_slidervolume, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_Slider1 = lv_slider_create(ui_MusicPage);
+    lv_slider_set_value(ui_Slider1, 30, LV_ANIM_OFF);
+    if(lv_slider_get_mode(ui_Slider1) == LV_SLIDER_MODE_RANGE) lv_slider_set_left_value(ui_Slider1, 0, LV_ANIM_OFF);
+    lv_obj_set_width(ui_Slider1, 181);
+    lv_obj_set_height(ui_Slider1, 27);
+    lv_obj_set_x(ui_Slider1, 6);
+    lv_obj_set_y(ui_Slider1, -93);
+    lv_obj_set_align(ui_Slider1, LV_ALIGN_CENTER);
+    lv_obj_set_style_bg_color(ui_Slider1, lv_color_hex(0xDDA7A7), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_Slider1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    lv_obj_set_style_bg_color(ui_slidervolume, lv_color_hex(0xF9E9E9), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_slidervolume, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_Slider1, lv_color_hex(0xF9E9E9), LV_PART_INDICATOR | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_Slider1, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
 
-    lv_obj_set_style_bg_color(ui_slidervolume, lv_color_hex(0xFFFFFF), LV_PART_KNOB | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_slidervolume, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_color(ui_Slider1, lv_color_hex(0xFFFFFF), LV_PART_KNOB | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_Slider1, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
 
     ui_Image14 = lv_img_create(ui_MusicPage);
     lv_img_set_src(ui_Image14, &ui_img_1086441320);
@@ -48,45 +47,41 @@ void ui_MusicPage_screen_init(void)
     lv_obj_add_flag(ui_Image14, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
     lv_obj_clear_flag(ui_Image14, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
-    ui_ddsonglist = lv_roller_create(ui_MusicPage);
-    lv_obj_set_width(ui_ddsonglist, 297);
-    lv_obj_set_height(ui_ddsonglist, 122);
-    lv_obj_set_x(ui_ddsonglist, 0);
-    lv_obj_set_y(ui_ddsonglist, -3);
-    lv_obj_set_align(ui_ddsonglist, LV_ALIGN_CENTER);
+    ui_Roller4 = lv_roller_create(ui_MusicPage);
+    lv_roller_set_options(ui_Roller4, "Option 1\nOption 2\nOption 3", LV_ROLLER_MODE_NORMAL);
+    lv_obj_set_width(ui_Roller4, 139);
+    lv_obj_set_height(ui_Roller4, 122);
+    lv_obj_set_x(ui_Roller4, 0);
+    lv_obj_set_y(ui_Roller4, -3);
+    lv_obj_set_align(ui_Roller4, LV_ALIGN_CENTER);
 
-    ui_btnplaypause = lv_switch_create(ui_MusicPage);
-    lv_obj_set_width(ui_btnplaypause, 83);
-    lv_obj_set_height(ui_btnplaypause, 30);
-    lv_obj_set_x(ui_btnplaypause, 0);
-    lv_obj_set_y(ui_btnplaypause, 88);
-    lv_obj_set_align(ui_btnplaypause, LV_ALIGN_CENTER);
+    ui_Switch2 = lv_switch_create(ui_MusicPage);
+    lv_obj_set_width(ui_Switch2, 60);
+    lv_obj_set_height(ui_Switch2, 30);
+    lv_obj_set_x(ui_Switch2, 0);
+    lv_obj_set_y(ui_Switch2, 88);
+    lv_obj_set_align(ui_Switch2, LV_ALIGN_CENTER);
 
-    ui_btnprev = lv_img_create(ui_MusicPage);
-    lv_img_set_src(ui_btnprev, &ui_img_862951715);
-    lv_obj_set_width(ui_btnprev, LV_SIZE_CONTENT);   /// 48
-    lv_obj_set_height(ui_btnprev, LV_SIZE_CONTENT);    /// 48
-    lv_obj_set_x(ui_btnprev, -88);
-    lv_obj_set_y(ui_btnprev, 87);
-    lv_obj_set_align(ui_btnprev, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_btnprev, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
-    lv_obj_clear_flag(ui_btnprev, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    ui_Image3 = lv_img_create(ui_MusicPage);
+    lv_img_set_src(ui_Image3, &ui_img_862951715);
+    lv_obj_set_width(ui_Image3, LV_SIZE_CONTENT);   /// 48
+    lv_obj_set_height(ui_Image3, LV_SIZE_CONTENT);    /// 48
+    lv_obj_set_x(ui_Image3, -57);
+    lv_obj_set_y(ui_Image3, 88);
+    lv_obj_set_align(ui_Image3, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_Image3, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
+    lv_obj_clear_flag(ui_Image3, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
-    ui_btnnext = lv_img_create(ui_MusicPage);
-    lv_img_set_src(ui_btnnext, &ui_img_853450402);
-    lv_obj_set_width(ui_btnnext, LV_SIZE_CONTENT);   /// 48
-    lv_obj_set_height(ui_btnnext, LV_SIZE_CONTENT);    /// 48
-    lv_obj_set_x(ui_btnnext, 94);
-    lv_obj_set_y(ui_btnnext, 85);
-    lv_obj_set_align(ui_btnnext, LV_ALIGN_CENTER);
-    lv_obj_add_flag(ui_btnnext, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
-    lv_obj_clear_flag(ui_btnnext, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    ui_Image4 = lv_img_create(ui_MusicPage);
+    lv_img_set_src(ui_Image4, &ui_img_853450402);
+    lv_obj_set_width(ui_Image4, LV_SIZE_CONTENT);   /// 48
+    lv_obj_set_height(ui_Image4, LV_SIZE_CONTENT);    /// 48
+    lv_obj_set_x(ui_Image4, 59);
+    lv_obj_set_y(ui_Image4, 88);
+    lv_obj_set_align(ui_Image4, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_Image4, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
+    lv_obj_clear_flag(ui_Image4, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
     lv_obj_add_event_cb(ui_Image13, ui_event_Image13, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_slidervolume, ui_event_slidervolume, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_ddsonglist, ui_event_ddsonglist, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_btnplaypause, ui_event_btnplaypause, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_btnprev, ui_event_btnprev, LV_EVENT_ALL, NULL);
-    lv_obj_add_event_cb(ui_btnnext, ui_event_btnnext, LV_EVENT_ALL, NULL);
 
 }

@@ -1,22 +1,17 @@
 #include "weather.h"
-#include "ui/ui.h"
 #include <time.h>
 #include <WiFi.h>
 
-// 真实值在 include/secrets.h（已被 .gitignore 忽略），由 platformio.ini 的
-// -include secrets.h 全局注入
-const char* WEATHER_API_KEY  = SENIVERSE_API_KEY;
-const char* WEATHER_LOCATION = WEATHER_CITY;
+static const char* const WEATHER_API_KEY  = SENIVERSE_API_KEY;
+static const char* const WEATHER_LOCATION = WEATHER_CITY;
 
-const char* WEATHER_LANGUAGE = "zh-Hans";
-const char* WEATHER_UNIT = "c";
+static const char* const WEATHER_LANGUAGE = "zh-Hans";
+static const char* const WEATHER_UNIT = "c";
 
 #define URL_BASE "http://api.seniverse.com/v3/weather/"
 
-WeatherNow_t g_weather_now = {0};          // 实时天气数据（初始化为0）
-char g_weather_forecast[512] = {0}; // 未来天气预报文本
-
-const char* week_names[] = {"周日", "周一", "周二", "周三", "周四", "周五", "周六"};
+// API key / 城市这些从 secrets.h 注入，别让它们泄漏成全局符号
+static const char* const week_names[] = {"周日", "周一", "周二", "周三", "周四", "周五", "周六"};
 
 static String build_url(const char* endpoint, const char* extra)
 {
@@ -135,16 +130,5 @@ bool get_weather(void)
         g_weather_forecast[len-1] = '\0';
     }
     
-    update_weather_ui();
-    
     return true;
-}
-
-//将天气数据显示到LVGL界面控件
-void update_weather_ui(void)
-{
-    lv_obj_set_style_text_font(ui_Roller6, &ui_font_Font1, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-    // 更新天气滚轮
-    lv_roller_set_options(ui_Roller6, g_weather_forecast, LV_ROLLER_MODE_NORMAL);
 }

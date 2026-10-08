@@ -28,6 +28,16 @@ void ui_CalendarPage_screen_init(void)
     lv_obj_set_y(ui_Calendar1, 24);
     lv_obj_set_align(ui_Calendar1, LV_ALIGN_CENTER);
 
+    ui_Image9 = lv_img_create(ui_CalendarPage);
+    lv_img_set_src(ui_Image9, &ui_img_1984310361);
+    lv_obj_set_width(ui_Image9, LV_SIZE_CONTENT);   /// 48
+    lv_obj_set_height(ui_Image9, LV_SIZE_CONTENT);    /// 48
+    lv_obj_set_x(ui_Image9, 0);
+    lv_obj_set_y(ui_Image9, -91);
+    lv_obj_set_align(ui_Image9, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_Image9, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
+    lv_obj_clear_flag(ui_Image9, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+
     lv_obj_add_event_cb(ui_Image19, ui_event_Image19, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_Calendar1, ui_event_Calendar1, LV_EVENT_ALL, NULL);
 

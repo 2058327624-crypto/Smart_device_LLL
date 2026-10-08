@@ -7,20 +7,18 @@
 
 extern SemaphoreHandle_t g_sd_mutex;
 
-// 上锁/解锁的快捷宏，保证成对出现
-#define SD_LOCK()   do { if (g_sd_mutex) xSemaphoreTakeRecursive(g_sd_mutex, portMAX_DELAY); } while (0)
-#define SD_UNLOCK() do { if (g_sd_mutex) xSemaphoreGiveRecursive(g_sd_mutex); } while (0)
+#define SD_LOCK()   do { if (g_sd_mutex) xSemaphoreTake(g_sd_mutex, portMAX_DELAY); } while (0)
+#define SD_UNLOCK() do { if (g_sd_mutex) xSemaphoreGive(g_sd_mutex); } while (0)
 
 class SDCardModule {
 public:
     SDCardModule();
 
-    // 挂载 SD 卡，建互斥锁，打印容量信息
+    // 挂载 SD 卡并建好互斥锁。失败返回 false（多半是硬件/接线问题，
+    // 不重试 —— 由用户按复位键重来）
     bool init();
     // 是否已挂载成功
     bool isMounted() const;
-    // 卡类型（CARD_NONE / CARD_MMC / CARD_SD / CARD_SDHC），掉线检测用
-    uint8_t cardType();
 
 private:
     SPIClass* hspi;  // HSPI指针

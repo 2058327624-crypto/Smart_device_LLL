@@ -1,6 +1,8 @@
 #include "My_xiaozhi.h"
-extern Audio audio;
+#include "My_audio.h"
+#include "view/ui_view.h"
 
+// 小智语音助手 —— 每轮对话的状态机
 static bool speaking_flag = false;
 
 void My_xiaozhi_init()
@@ -10,31 +12,39 @@ void My_xiaozhi_init()
 
 void My_xiaozhi_loop()
 {
-    if (audio.isRunning())//检查音频是否正在播放
+    if (audio_is_playing())
     {
         return;
     }
     xiaozhi_loop();
 
-    // 识别结果由库内部缓存，xiaozhi_answer() 会自行取用，这里不需要接返回值
-    xiaozhi_listen();
+   //xiaozhi_listen() 返回 true 表示刚识别完一整句。
+    if (xiaozhi_listen())
+    {
+        String q = xiaozhi_question();
+        String line = String("> ") + q;
+        ui_view_xiaozhi_line(line.c_str());
+    }
 
     if (xiaozhi_speak() && !speaking_flag)
     {
-        speaking_flag = true; // 锁住，防止循环重复执行
+        speaking_flag = true;
 
-        String answer_url  = xiaozhi_answer(1);   //1 TTS url
+        //先取回答文本：xiaozhi_answer(0) 读的是答案文字，不清标志；
+        //xiaozhi_answer(1) 才取 TTS 地址并清标志。
+        String answer = xiaozhi_answer(0);
+        String line = String("小智: ") + answer;
+        ui_view_xiaozhi_line(line.c_str());
 
-        audio.stopSong(); // 停止之前正在播放的音频
-        audio.connecttohost(answer_url.c_str());
+        String answer_url = xiaozhi_answer(1);   // 1 = TTS url
+        audio_request_tts(answer_url.c_str());
     }
 
     // 播放结束，释放标志位
-    if(speaking_flag && !audio.isRunning())
+    if(speaking_flag && !audio_is_playing())
     {
         speaking_flag = false;
     }
 
     delay(10);
 }
-

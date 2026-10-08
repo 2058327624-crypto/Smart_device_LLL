@@ -47,7 +47,8 @@ extern lv_obj_t * ui_Label7;
 extern lv_obj_t * ui_Label8;
 extern lv_obj_t * ui_Label9;
 extern lv_obj_t * ui_Label10;
-extern lv_obj_t * ui_TextArea4;
+extern lv_obj_t * ui_Label2;
+extern lv_obj_t * ui_Image25;
 // CUSTOM VARIABLES
 
 // SCREEN: ui_xiaozhiPage
@@ -58,6 +59,7 @@ extern lv_obj_t * ui_Image11;
 extern lv_obj_t * ui_Image12;
 void ui_event_Switch1(lv_event_t * e);
 extern lv_obj_t * ui_Switch1;
+extern lv_obj_t * ui_TextArea5;
 // CUSTOM VARIABLES
 
 // SCREEN: ui_MusicPage
@@ -65,17 +67,12 @@ void ui_MusicPage_screen_init(void);
 extern lv_obj_t * ui_MusicPage;
 void ui_event_Image13(lv_event_t * e);
 extern lv_obj_t * ui_Image13;
-void ui_event_slidervolume(lv_event_t * e);
-extern lv_obj_t * ui_slidervolume;
+extern lv_obj_t * ui_Slider1;
 extern lv_obj_t * ui_Image14;
-void ui_event_ddsonglist(lv_event_t * e);
-extern lv_obj_t * ui_ddsonglist;
-void ui_event_btnplaypause(lv_event_t * e);
-extern lv_obj_t * ui_btnplaypause;
-void ui_event_btnprev(lv_event_t * e);
-extern lv_obj_t * ui_btnprev;
-void ui_event_btnnext(lv_event_t * e);
-extern lv_obj_t * ui_btnnext;
+extern lv_obj_t * ui_Roller4;
+extern lv_obj_t * ui_Switch2;
+extern lv_obj_t * ui_Image3;
+extern lv_obj_t * ui_Image4;
 // CUSTOM VARIABLES
 
 // SCREEN: ui_SettingsPage
@@ -110,6 +107,7 @@ void ui_event_Image19(lv_event_t * e);
 extern lv_obj_t * ui_Image19;
 void ui_event_Calendar1(lv_event_t * e);
 extern lv_obj_t * ui_Calendar1;
+extern lv_obj_t * ui_Image9;
 // CUSTOM VARIABLES
 
 // SCREEN: ui_StatementPage
@@ -118,15 +116,19 @@ extern lv_obj_t * ui_StatementPage;
 void ui_event_Image20(lv_event_t * e);
 extern lv_obj_t * ui_Image20;
 extern lv_obj_t * ui_Label11;
-extern lv_obj_t * ui_Image3;
 // CUSTOM VARIABLES
 
 // SCREEN: ui_WeatherPage
 void ui_WeatherPage_screen_init(void);
 extern lv_obj_t * ui_WeatherPage;
+extern lv_obj_t * ui_Panel3;
+extern lv_obj_t * ui_Panel4;
+extern lv_obj_t * ui_Image10;
+extern lv_obj_t * ui_Label1;
+extern lv_obj_t * ui_Panel5;
+extern lv_obj_t * ui_Roller6;
 void ui_event_Image21(lv_event_t * e);
 extern lv_obj_t * ui_Image21;
-extern lv_obj_t * ui_Roller6;
 // CUSTOM VARIABLES
 
 // SCREEN: ui_SerialPortPage
@@ -157,12 +159,15 @@ LV_IMG_DECLARE(ui_img_2138131786);    // assets/日历.png
 LV_IMG_DECLARE(ui_img_1090684027);    // assets/声明.png
 LV_IMG_DECLARE(ui_img_944254084);    // assets/天气.png
 LV_IMG_DECLARE(ui_img_868640562);    // assets/串口.png
+LV_IMG_DECLARE(ui_img_wifi__png);    // assets/wifi_.png
 LV_IMG_DECLARE(ui_img_1609717271);    // assets/返回.png
 LV_IMG_DECLARE(ui_img_1086441320);    // assets/声音.png
 LV_IMG_DECLARE(ui_img_862951715);    // assets/上一首.png
 LV_IMG_DECLARE(ui_img_853450402);    // assets/下一首.png
 LV_IMG_DECLARE(ui_img_252039257);    // assets/亮度_o.png
 LV_IMG_DECLARE(ui_img_618490499);    // assets/羊.png
+LV_IMG_DECLARE(ui_img_1984310361);    // assets/日历1.png
+LV_IMG_DECLARE(ui_img_1772208564);    // assets/多云.png
 LV_IMG_DECLARE(ui_img_728335879);    // assets/16寄件、发送.png
 LV_IMG_DECLARE(ui_img_1938144871);    // assets/接收消息模板.png
 
@@ -170,6 +175,7 @@ LV_IMG_DECLARE(ui_img_1938144871);    // assets/接收消息模板.png
 LV_FONT_DECLARE(ui_font_Font1);
 LV_FONT_DECLARE(ui_font_Font2);
 LV_FONT_DECLARE(ui_font_Font3);
+LV_FONT_DECLARE(ui_font_Font4);
 
 // UI INIT
 void ui_init(void);

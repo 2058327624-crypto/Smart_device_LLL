@@ -102,8 +102,8 @@ void ui_Home_screen_init(void)
 
     ui_Panel1 = lv_obj_create(ui_Home);
     lv_obj_set_width(ui_Panel1, 317);
-    lv_obj_set_height(ui_Panel1, 70);
-    lv_obj_set_x(ui_Panel1, 0);
+    lv_obj_set_height(ui_Panel1, 76);
+    lv_obj_set_x(ui_Panel1, 1);
     lv_obj_set_y(ui_Panel1, -82);
     lv_obj_set_align(ui_Panel1, LV_ALIGN_CENTER);
     lv_obj_clear_flag(ui_Panel1, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
@@ -111,8 +111,8 @@ void ui_Home_screen_init(void)
     ui_time = lv_label_create(ui_Home);
     lv_obj_set_width(ui_time, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_time, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_time, -58);
-    lv_obj_set_y(ui_time, -90);
+    lv_obj_set_x(ui_time, -20);
+    lv_obj_set_y(ui_time, -87);
     lv_obj_set_align(ui_time, LV_ALIGN_CENTER);
     lv_label_set_text(ui_time, "00:00:00");
     lv_obj_set_style_text_font(ui_time, &ui_font_Font2, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -120,8 +120,8 @@ void ui_Home_screen_init(void)
     ui_date = lv_label_create(ui_Home);
     lv_obj_set_width(ui_date, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_date, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_date, -56);
-    lv_obj_set_y(ui_date, -58);
+    lv_obj_set_x(ui_date, -16);
+    lv_obj_set_y(ui_date, -55);
     lv_obj_set_align(ui_date, LV_ALIGN_CENTER);
     lv_label_set_text(ui_date, "0000/00/00");
     lv_obj_set_style_text_font(ui_date, &lv_font_montserrat_16, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -198,14 +198,24 @@ void ui_Home_screen_init(void)
     lv_label_set_text(ui_Label10, "声明");
     lv_obj_set_style_text_font(ui_Label10, &ui_font_Font1, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_TextArea4 = lv_textarea_create(ui_Home);
-    lv_obj_set_width(ui_TextArea4, 101);
-    lv_obj_set_height(ui_TextArea4, 60);
-    lv_obj_set_x(ui_TextArea4, 95);
-    lv_obj_set_y(ui_TextArea4, -84);
-    lv_obj_set_align(ui_TextArea4, LV_ALIGN_CENTER);
-    lv_textarea_set_text(ui_TextArea4, "wifi:未连接");
-    lv_obj_set_style_text_font(ui_TextArea4, &ui_font_Font1, LV_PART_MAIN | LV_STATE_DEFAULT);
+    ui_Label2 = lv_label_create(ui_Home);
+    lv_obj_set_width(ui_Label2, LV_SIZE_CONTENT);   /// 1
+    lv_obj_set_height(ui_Label2, LV_SIZE_CONTENT);    /// 1
+    lv_obj_set_x(ui_Label2, 119);
+    lv_obj_set_y(ui_Label2, -62);
+    lv_obj_set_align(ui_Label2, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_Label2, "未连接");
+    lv_obj_set_style_text_font(ui_Label2, &ui_font_Font1, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_Image25 = lv_img_create(ui_Home);
+    lv_img_set_src(ui_Image25, &ui_img_wifi__png);
+    lv_obj_set_width(ui_Image25, LV_SIZE_CONTENT);   /// 32
+    lv_obj_set_height(ui_Image25, LV_SIZE_CONTENT);    /// 32
+    lv_obj_set_x(ui_Image25, 119);
+    lv_obj_set_y(ui_Image25, -92);
+    lv_obj_set_align(ui_Image25, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_Image25, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
+    lv_obj_clear_flag(ui_Image25, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
     lv_obj_add_event_cb(ui_xiaozhi, ui_event_xiaozhi, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_Music, ui_event_Music, LV_EVENT_ALL, NULL);

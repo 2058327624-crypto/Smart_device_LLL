@@ -27,6 +27,7 @@ void ui_SerialPortPage_screen_init(void)
     lv_obj_set_y(ui_TextArea2, -58);
     lv_obj_set_align(ui_TextArea2, LV_ALIGN_CENTER);
     lv_textarea_set_placeholder_text(ui_TextArea2, "Placeholder...");
+    lv_obj_set_style_text_font(ui_TextArea2, &ui_font_Font1, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_TextArea3 = lv_textarea_create(ui_SerialPortPage);
     lv_obj_set_width(ui_TextArea3, 221);
@@ -35,6 +36,7 @@ void ui_SerialPortPage_screen_init(void)
     lv_obj_set_y(ui_TextArea3, 64);
     lv_obj_set_align(ui_TextArea3, LV_ALIGN_CENTER);
     lv_textarea_set_placeholder_text(ui_TextArea3, "Placeholder...");
+    lv_obj_set_style_text_font(ui_TextArea3, &ui_font_Font1, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_Image23 = lv_img_create(ui_SerialPortPage);
     lv_img_set_src(ui_Image23, &ui_img_728335879);

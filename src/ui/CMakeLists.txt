@@ -20,16 +20,20 @@ SET(SOURCES screens/ui_Home.c
     images/ui_img_1090684027.c
     images/ui_img_944254084.c
     images/ui_img_868640562.c
+    images/ui_img_wifi__png.c
     images/ui_img_1609717271.c
     images/ui_img_1086441320.c
     images/ui_img_862951715.c
     images/ui_img_853450402.c
     images/ui_img_252039257.c
     images/ui_img_618490499.c
+    images/ui_img_1984310361.c
+    images/ui_img_1772208564.c
     images/ui_img_728335879.c
     images/ui_img_1938144871.c
     fonts/ui_font_Font1.c
     fonts/ui_font_Font2.c
-    fonts/ui_font_Font3.c)
+    fonts/ui_font_Font3.c
+    fonts/ui_font_Font4.c)
 
 add_library(ui ${SOURCES})

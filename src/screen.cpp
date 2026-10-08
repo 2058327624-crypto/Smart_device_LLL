@@ -25,13 +25,15 @@ void ScreenModule::init()
         const uint16_t screen_w = 320;
         const uint16_t screen_h = 240;
 
-        // 半屏缓冲区
+        // 声明并分配显示缓冲区内存
         static lv_color_t * buf;
         buf = (lv_color_t*)malloc(sizeof(lv_color_t) * screen_w * (screen_h / 2));
-
+        
+        // 初始化显示缓冲区
         static lv_disp_draw_buf_t draw_buf;
         lv_disp_draw_buf_init(&draw_buf, buf, nullptr, screen_w * (screen_h / 2));
 
+        // 初始化显示驱动
         static lv_disp_drv_t disp_drv;
         lv_disp_drv_init(&disp_drv);
 
@@ -83,11 +85,7 @@ void ScreenModule::init()
         lv_indev_drv_register(&indev_drv);
     }
 }
-
-/**
- * @brief 设置屏幕亮度
- * @param brightness 亮度值 (0=关闭, 255=最亮)
- */
+// 设置屏幕亮度，0-255
 void ScreenModule::setBrightness(uint8_t brightness)
 {
     currentBrightness = brightness;

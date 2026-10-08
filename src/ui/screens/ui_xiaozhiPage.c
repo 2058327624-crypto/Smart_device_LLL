@@ -24,18 +24,27 @@ void ui_xiaozhiPage_screen_init(void)
     lv_img_set_src(ui_Image12, &ui_img_1215322996);
     lv_obj_set_width(ui_Image12, LV_SIZE_CONTENT);   /// 60
     lv_obj_set_height(ui_Image12, LV_SIZE_CONTENT);    /// 48
-    lv_obj_set_x(ui_Image12, 0);
-    lv_obj_set_y(ui_Image12, -8);
+    lv_obj_set_x(ui_Image12, -54);
+    lv_obj_set_y(ui_Image12, -88);
     lv_obj_set_align(ui_Image12, LV_ALIGN_CENTER);
     lv_obj_add_flag(ui_Image12, LV_OBJ_FLAG_ADV_HITTEST);     /// Flags
     lv_obj_clear_flag(ui_Image12, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
 
     ui_Switch1 = lv_switch_create(ui_xiaozhiPage);
-    lv_obj_set_width(ui_Switch1, 103);
-    lv_obj_set_height(ui_Switch1, 46);
-    lv_obj_set_x(ui_Switch1, 0);
-    lv_obj_set_y(ui_Switch1, 53);
+    lv_obj_set_width(ui_Switch1, 60);
+    lv_obj_set_height(ui_Switch1, 26);
+    lv_obj_set_x(ui_Switch1, 14);
+    lv_obj_set_y(ui_Switch1, -84);
     lv_obj_set_align(ui_Switch1, LV_ALIGN_CENTER);
+
+    ui_TextArea5 = lv_textarea_create(ui_xiaozhiPage);
+    lv_obj_set_width(ui_TextArea5, 313);
+    lv_obj_set_height(ui_TextArea5, 164);
+    lv_obj_set_x(ui_TextArea5, -2);
+    lv_obj_set_y(ui_TextArea5, 31);
+    lv_obj_set_align(ui_TextArea5, LV_ALIGN_CENTER);
+    lv_textarea_set_text(ui_TextArea5, "欢迎使用语音小智...");
+    lv_obj_set_style_text_font(ui_TextArea5, &ui_font_Font1, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     lv_obj_add_event_cb(ui_Image11, ui_event_Image11, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_Switch1, ui_event_Switch1, LV_EVENT_ALL, NULL);
