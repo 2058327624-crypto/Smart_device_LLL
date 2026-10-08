@@ -1,6 +1,6 @@
-# 智能桌面终端 (Smart Device LLL)
+# 多功能智能终端 (Smart Device LLL)
 
-基于 **ESP32-S3** 的多功能桌面小终端。一块 320×240 触摸屏 + 语音助手 + SD 卡音乐播放器 + 天气/时钟/日历，全部跑在 FreeRTOS 上。
+基于 **ESP32-S3** 的多功能智能终端。一块 320×240 触摸屏 + 语音助手 + SD 卡音乐播放器 + 天气/时钟/日历，全部跑在 FreeRTOS 上。
 
 ![平台](https://img.shields.io/badge/Platform-ESP32--S3-blue)
 ![框架](https://img.shields.io/badge/Framework-Arduino-00979D)
@@ -11,6 +11,7 @@
 
 ## 目录
 
+- [界面预览](#界面预览)
 - [功能特性](#功能特性)
 - [硬件清单](#硬件清单)
 - [接线说明](#接线说明)
@@ -19,6 +20,26 @@
 - [使用说明](#使用说明)
 - [项目结构](#项目结构)
 - [已知限制](#已知限制)
+
+---
+
+## 界面预览
+
+| 主页 | 小智 · 语音助手 | 音乐播放器 |
+| :---: | :---: | :---: |
+| ![主页](picture/主页.jpg) | ![小智页](picture/小智页.jpg) | ![音乐页](picture/音乐页.jpg) |
+
+| 设置 · 配网 | 天气 · 实况 | 天气 · 预报 |
+| :---: | :---: | :---: |
+| ![设置页](picture/设置页.jpg) | ![天气页](picture/天气页_当前.jpg) | ![天气页](picture/天气页_未来.jpg) |
+
+| 日历 | 游戏 · 羊了个羊 | 串口 |
+| :---: | :---: | :---: |
+| ![日历页](picture/日历页.jpg) | ![游戏页](picture/游戏页.jpg) | ![串口页](picture/串口页.jpg) |
+
+| 声明 |
+| :---: |
+| ![声明页](picture/声明页.jpg) |
 
 ---
 
@@ -40,9 +61,9 @@
 
 - **8 个 FreeRTOS 任务**并行调度，LVGL 与网络/音频/SD 完全解耦
 - **跨任务 UI 更新**统一走 `lv_async_call()`，避免 LVGL 线程安全问题
-- **SD 总线互斥锁**（递归互斥量），三处并发访问 SD 互不打架
+- **SD 总线互斥锁**（普通互斥量），三处并发访问 SD 互不打架
 - **SPI 总线分离**：屏幕走 SPI2，SD 卡走 SPI3（HSPI），两者不抢总线
-- **双 I2S 通道**：麦克风输入与功放输出分属 I2S0 / I2S1
+- **双 I2S 通道**：麦克风输入走 I2S0，功放输出走 I2S1
 
 ---
 
@@ -53,7 +74,7 @@
 | 主控 | **ESP32-S3-DevKitC-1** (N16R8) | 1 | 16MB Flash + 8MB **Octal PSRAM** |
 | 屏幕 | **ILI9341** 2.8" SPI TFT，320×240 | 1 | 带 **XPT2046** 电阻触摸 |
 | 麦克风 | **INMP441** | 1 | I2S 数字麦克风 |
-| 功放 | **MAX98357A** | 1 | I2S 数字功放，接 4Ω/8Ω 喇叭 |
+| 功放 | **NS4168** | 1 | I2S 数字功放，接 4Ω/8Ω 喇叭 |
 | 喇叭 | 4Ω 3W 或 8Ω 1W | 1 | — |
 | SD 卡模块 | MicroSD SPI 转接板 | 1 | 独立 SPI 总线 |
 | SD 卡 | MicroSD 卡（FAT32） | 1 | 存放 MP3 |
@@ -75,7 +96,7 @@
         ┌──────────────────┬───────────┼───────────┬──────────────────┐
         │                  │           │           │                  │
    ┌────┴─────┐      ┌─────┴────┐ ┌────┴────┐ ┌────┴─────┐      ┌─────┴──────┐
-   │ ILI9341  │      │ XPT2046  │ │ INMP441 │ │MAX98357A │      │  MicroSD   │
+   │ ILI9341  │      │ XPT2046  │ │ INMP441 │ │  NS4168  │      │  MicroSD   │
    │  屏幕    │      │  触摸    │ │  麦克风 │ │  功放    │      │   模块     │
    └──────────┘      └──────────┘ └─────────┘ └────┬─────┘      └────────────┘
     SPI2 (共用)        SPI2 独立      I2S0 输入     I2S1 输出        SPI3 (HSPI)
@@ -120,20 +141,21 @@
 
 > `L/R` 悬空会随机选声道，务必接地。录音质量差时优先检查这里和电源退耦。
 
-### 3. MAX98357A 功放（I2S1，输出）
+### 3. NS4168 功放（I2S1，输出）
 
-| MAX98357A | ESP32-S3 GPIO | 说明 |
+| NS4168 | ESP32-S3 GPIO | 说明 |
 | :--- | :---: | :--- |
-| VIN | **5V** | ⚠️ 强烈建议接 5V，见下方提示 |
+| VDD | **5V** | ⚠️ 强烈建议接 5V，见下方提示 |
 | GND | **GND** | — |
 | BCLK | **40** | 位时钟 `I2S_BCLK` |
 | LRC / LRCLK | **41** | 声道时钟 `I2S_LRC` |
 | DIN | **39** | 数据输入 `I2S_DOUT` |
-| SD / SHDN | 不接 | 内部上拉，默认使能 |
-| GAIN | 不接 | 默认 9dB；接 GND=15dB，接 VDD=3dB |
-| OUT+ / OUT− | 接喇叭 | 差分输出，**不要**接地 |
+| /SD 或 CTRL | 不接 | 使能/静音脚，模块默认使能；本项目不用它做静音 |
+| SPK+ / SPK− | 接喇叭 | 差分输出，**不要**接地 |
 
-> **供电提示**：本项目把音量上限锁在 `AUDIO_VOLUME_MAX = 10`（库范围 0~21），原因就是 3.3V 供电余量不足 —— 音量开大时功放会把 3.3V 轨拉垮，连带 SD 卡掉线。把功放 VIN 接到 **5V** 可以显著改善。
+> 不同批次的 NS4168 模块丝印叫法不一致（`/SD`、`CTRL`、`SPK±`、`OUT±` 都见过），以手上模块为准，认准 VDD / GND / BCLK / LRC / DIN 五个就行。
+>
+> **供电提示**：本项目把音量上限锁在 `AUDIO_VOLUME_MAX = 10`（库范围 0~21），原因就是 3.3V 供电余量不足 —— 音量开大时功放会把 3.3V 轨拉垮，连带 SD 卡掉线。把功放 VDD 接到 **5V** 可以显著改善。
 
 ### 4. MicroSD 卡模块（SPI3 / HSPI，独立）
 
@@ -156,8 +178,8 @@ GPIO  5  ── TFT_RST         GPIO 21 ── SD_SCLK
 GPIO  6  ── TFT_DC          GPIO 39 ── I2S_DOUT   (功放 DIN)
 GPIO  7  ── TFT_MOSI/T_DIN  GPIO 40 ── I2S_BCLK   (功放 BCLK)
 GPIO  8  ── TOUCH_CS        GPIO 41 ── I2S_LRC    (功放 LRC)
-GPIO 10  ── SD_CS           GPIO 43 ── UART TX    (串口页，勿占用)
-GPIO 11  ── I2S_SCK         GPIO 44 ── UART RX    (串口页，勿占用)
+GPIO 10  ── SD_CS           GPIO 43 ── UART TX    (USB 串口，勿占用)
+GPIO 11  ── I2S_SCK         GPIO 44 ── UART RX    (USB 串口，勿占用)
 GPIO 12  ── I2S_SD          GPIO 33~37 ── Octal PSRAM 占用，勿用
 GPIO 13  ── I2S_WS
 GPIO 15  ── TFT_SCLK/T_CLK
@@ -172,53 +194,125 @@ GPIO 47  ── SD_MOSI
 
 ### FreeRTOS 任务
 
-| 任务 | 优先级 | 栈 (字) | 周期 | 职责 |
+全部定义在 `src/tasks/tasks.cpp`，一个文件看完。
+
+| 任务 | 优先级 | 栈 (字节) | 周期 | 职责 |
 | :--- | :---: | :---: | :--- | :--- |
-| `audio_task` | 5 | 8192 | 1 ms | 音频解码播放，执行播放/暂停/音量请求 |
-| `weather_task` | 5 | 4800 | 5 min | 拉取天气 API，刷新天气页 |
-| `sd_task` | 4 | 4096 | 5 s | 监测 SD 卡是否掉线 |
-| `xiaozhi_task` | 4 | 4500 | 1 ms | 语音助手对话（开关打开时才跑） |
-| `ui_task` | 3 | 4500 | 1 ms | `lv_timer_handler()` + 时钟/播放开关同步 |
-| `wifi_task` | 3 | 4500 | 事件驱动 | 扫描热点、连接 WiFi、更新状态显示 |
+| `audio_task` | 5 | 8192 | 1 ms | 音频解码播放，执行播放/暂停/音量/TTS 请求 |
+| `weather_task` | 5 | 4800 | 5 min | 拉取天气 API，请求刷新天气页 |
+| `sd_task` | 4 | 4096 | 一次性 | 开机挂载 SD 卡并扫曲目，干完自己 `vTaskDelete` |
+| `xiaozhi_task` | 4 | 12288 | 1 ms | 语音助手对话（开关打开时才跑） |
+| `ui_task` | 3 | 8192 | 1 ms | `lv_timer_handler()` + 时钟/播放开关同步 |
+| `wifi_task` | 3 | 4500 | 50 ms | 扫描热点、连接 WiFi、刷新状态文字 |
 | `time_task` | 3 | 4500 | 1 s | 刷新主页时钟日期 |
 | `uart_task` | 3 | 4500 | 1 s | 串口收发 |
 
+任务体一律是"死循环 + 调一个模块函数"，逻辑都在模块里。改调度策略不用动业务代码。
+
+> **栈的单位是字节**，不是原生 FreeRTOS 的字（ESP-IDF 的 `xTaskCreate`
+> 收字节，见 `task.h` 的注释 "differs from vanilla FreeRTOS"）。两个大栈
+> 有实测依据，别凭感觉改小：
+>
+> - `xiaozhi_task` 要 12K —— 内部有两次 HTTPS（百度 token + MiniMax），
+>   一次 TLS 握手在十几 KB 级别，且发生在 7 层深的调用栈里。给 4500 时
+>   实测只剩 **148 字节**，会随机崩。
+> - `ui_task` 要 8K —— `lv_timer_handler()` 的重绘递归不浅，给 4500 时
+>   实测剩 **872 字节**。
+>
+> 量栈用 `uxTaskGetStackHighWaterMark()`（返回字节，且是历史最小值，
+> 要在最坏情况跑过之后再读）。
+
 ### 跨任务通信
 
-整个项目**没有任何任务直接操作另一个任务的资源**，全部靠两种机制解耦：
+关键点：**共享资源各自只有一个所有者**，别人想用得发请求。
 
-**1. `lv_async_call()` —— 非 UI 任务更新界面**
+**1. 界面 —— 只有 `view/` 能碰控件**
 
-LVGL 不是线程安全的，只有 `ui_task` 能碰控件。`wifi_task`、`weather_task`、`time` 等需要改界面时，把回调和数据指针投递给 LVGL，由 `ui_task` 在 `lv_timer_handler()` 里统一执行：
-
-```cpp
-// wifi_task 里更新 WiFi 状态标签
-char* txt = (char*)malloc(128);
-sprintf(txt, "WiFi:已连接\nIP:%s", ip.toString().c_str());
-lv_async_call(update_wifi_label_cb, txt);   // 交给 ui_task 执行
-```
-
-**2. 标志位 —— 事件跨任务通知**
-
-`g_wifi_scan_req`、`g_wifi_connect_req`、`g_audio_cmd` 等 `volatile` 标志位，生产者只置位，消费者只清位：
+LVGL 不是线程安全的，只有 `ui_task` 能碰控件。别的任务要改界面时，
+调 `view/ui_view.h` 里的语义化接口，函数内部自己 `lv_async_call` 投给 `ui_task`：
 
 ```cpp
-// UI 回调（运行在 ui_task）
-audio_request_play(idx, 0);      // 只是置个标志，立刻返回
+// wifi_task 里更新主页的 WiFi 状态文字
+ui_view_wifi_state(cur_status == WL_CONNECTED);
 
-// audio_task 每轮检查并执行
-void audio_process_requests(void) { /* 取走标志 → connecttoSD() */ }
+// ui_view.cpp 内部：投给 ui_task，回调里才真正操作控件
+void ui_view_wifi_state(bool connected) { /* ... lv_async_call(cb, txt) ... */ }
 ```
+
+调试用的判据：`grep -rn "lv_" src/` 的结果里，除了 `view/`、`ui_events.c`
+（SquareLine 生成的事件回调）、`screen.cpp`（LVGL 移植层）和 `tasks.cpp`
+里的 `lv_timer_handler()`，不该出现在别处。
+
+**2. 音频 —— 只有 `audio_task` 能碰 `Audio` 对象**
+
+`Audio` 不是线程安全的，但音乐播放和小智的语音回答都要用它。所以统一发请求，
+由 `audio_task` 独占执行：
+
+```cpp
+// UI 回调 / 小智模块：只发请求，立刻返回
+audio_request_play(idx, 0);
+audio_request_tts(url);
+
+// audio_task 每轮取走请求并执行，只有这里出现 audio.xxx()
+void audio_process_requests(void) { /* 取走 g_audio_cmd → connecttoSD() */ }
+```
+
+**3. 状态 —— 集中在 `state/app_state.h`**
+
+`g_wifi_scan_req`、`g_wifi_connect_req`、`g_audio_cmd`、`g_xiaozhi_ask` 等
+`volatile` 标志位，生产者只置位，消费者只清位。每个变量在头文件里都注明了
+谁写谁读。
+
+需要保护的缓冲区（WiFi 的 ssid/pwd）用 `g_wifi_cfg_mutex`：一边是
+`strncpy` 写、一边要 `strlen` 读，不加锁会读到改了一半的内容。
 
 ### SD 卡并发保护
 
-音频播放、音乐列表扫描、音乐加载三处会同时访问 SD 卡，用**递归互斥锁**保护（`src/sd_card.h`）：
+音频播放、音乐列表扫描、音乐加载三处会同时访问 SD 卡，用互斥锁保护（`src/sd_card.h`）：
 
 ```cpp
-SD_LOCK();                          // xSemaphoreTakeRecursive
+SD_LOCK();                          // xSemaphoreTake
 bool ok = audio.connecttoSD(path);  // 整段持有锁
 SD_UNLOCK();
 ```
+
+这是**普通**互斥量。全项目的用点都是平铺的单层临界区，没有嵌套获取，
+所以不需要递归锁——但代价是**同一任务里再嵌套一次 `SD_LOCK()` 就是死锁**
+（自己等自己）。以后要在持锁函数里调另一个也会加锁的函数时，把锁提到
+最外层。
+
+注意这条锁**只覆盖"打开文件"这一下**。真正的持续读盘是 `audio.loop()`
+里的 `audiofile.read()`，它不持锁 —— 靠的是"扫描总发生在播放之前"这个
+时序，而不是锁本身。改动音乐页流程时留意这点。
+
+### SD 卡为什么这么简单
+
+SD 卡挂不上、掉线，**根因是供电不足**（Wi-Fi 发射的电流尖峰把 3.3V 拉垮），
+属于硬件问题。所以软件这边刻意**不加重试、不轮询、不检测**：
+
+```cpp
+void sd_task(void *pvParameters) {
+    g_sdcard.init();        // 挂一次
+    vTaskDelete(NULL);      // 成败就此定论，挂不上就按复位键
+}
+```
+
+这不是偷懒。之前试过自动重挂载、掉线检测、僵尸播放看门狗，结果要么
+没用（驱动层的 `cardType()` 返回的是缓存字段，检测不到掉线），要么
+帮倒忙（在 `audio_task` 这个最高优先级任务里以 1ms 周期读卡，卡死时
+把 IDLE 饿死，触发 TASK_WDT 重启）。
+
+### 排查"突然重启"
+
+现象都是"用着用着回到主页"，但两种成因修法完全相反，得先分清：
+
+- **崩溃重启**：串口会先打出 `Guru Meditation` 和一堆回溯，往上翻就能定位。
+- **掉电／brownout 重启**：串口直接从头开始，崩之前没有任何异常输出。
+
+前者查代码，后者查硬件（供电、退耦、接线）——概率上本项目几乎都是后者。
+
+> `main.cpp` 早期启动时会打印 `esp_reset_reason()`，一眼就能区分这两者。
+> 现已按需求移除，要复现的话把那段加回 `setup()` 开头就行。
 
 ---
 
@@ -258,7 +352,7 @@ cp include/secrets.example.h include/secrets.h
 ### 语音助手的数据流
 
 ```
-麦克风(INMP441) ──I2S0──▶ 百度语音识别 ──▶ MiniMax 大模型 ──▶ 百度语音合成 ──▶ 功放(MAX98357A)
+麦克风(INMP441) ──I2S0──▶ 百度语音识别 ──▶ MiniMax 大模型 ──▶ 百度语音合成 ──▶ 功放(NS4168)
                             BAIDU_*_KEY      MINIMAX_API_KEY      BAIDU_*_KEY
 ```
 
@@ -283,7 +377,7 @@ SD卡根目录/
 └── 起风了.mp3
 ```
 
-最多识别 **32 首**，文件名最长 63 字符。
+最多识别 **32 首**。文件名（含 `.mp3` 后缀）最长 **62 字符**——超了会被截断，可能连后缀一起截掉，那首就点不响；列表里显示的歌名则截到 39 字符。
 
 ---
 
@@ -311,34 +405,58 @@ Smart_device_LLL/
 ├── include/
 │   ├── lv_conf.h               # LVGL 配置
 │   ├── secrets.example.h       # 凭据模板
-│   └── secrets.h               # 真实凭据
+│   └── secrets.h               # 真实凭据（不进仓库）
+├── picture/                    # README 用的界面截图
 ├── scripts/
-│   └── patch_minimax.py        # 编译前自动注入 MiniMax key 到 baidu-xiaozhi 库
+│   ├── patch_minimax.py        # 编译前自动注入 MiniMax key 到 baidu-xiaozhi 库
+│   └── gen_weather_icons.py    # 把天气图标 PNG 转成 LVGL C 数组
 └── src/
-    ├── main.cpp                # setup()：初始化各模块 + 创建 8 个任务
-    ├── screen.cpp/.h           # TFT 驱动 + LVGL 显示/触摸移植层
-    ├── My_Wifi.cpp/.h          # WiFi 连接、扫描、NTP 对时
-    ├── weather.cpp/.h          # 心知天气 API + 天气页更新
-    ├── My_audio.cpp/.h         # 音频播放、MP3 扫描、跨任务请求队列
-    ├── My_xiaozhi.cpp/.h       # 语音助手状态机
-    ├── sd_card.cpp/.h          # SD 卡挂载 + 递归互斥锁
-    ├── rtos/                   # 各 FreeRTOS 任务
-    │   ├── ui_task.cpp
-    │   ├── audio_task.cpp
-    │   ├── wifi_task.cpp
-    │   ├── xiaozhi_task.cpp
-    │   ├── weather_task.cpp
-    │   ├── time_task.cpp
-    │   ├── uart_task.cpp
-    │   └── sd_task.cpp
+    ├── main.cpp                # setup()：初始化顺序
+    ├── state/                  # 【状态层】跨模块共享的变量都在这儿
+    │   └── app_state.cpp/.h    # 想知道"项目有哪些状态"看这一个文件
+    ├── view/                   # 【视图层】唯一允许碰 LVGL 控件的地方
+    │   ├── ui_view.cpp/.h      # 语义化接口，内部统一 lv_async_call
+    │   └── weather_icons.c/.h  # 天气图标 C 数组（脚本生成）
+    ├── tasks/                  # 【任务层】8 个 FreeRTOS 任务
+    │   └── tasks.cpp/.h        # 一个文件看全"谁在跑、跑多快、干什么"
+    ├── screen.cpp/.h           # 【硬件层】TFT 驱动 + LVGL 移植
+    ├── sd_card.cpp/.h          # 【硬件层】SD 卡挂载 + 互斥锁
+    ├── My_Wifi.cpp/.h          # 【业务层】WiFi 连接、扫描、NTP 对时
+    ├── My_audio.cpp/.h         # 【业务层】音频播放、MP3 扫描、请求队列
+    ├── My_xiaozhi.cpp/.h       # 【业务层】语音助手状态机
+    ├── weather.cpp/.h          # 【业务层】心知天气 API（只取数据，不画界面）
     └── ui/                     # SquareLine Studio 生成的 LVGL 界面
-        ├── ui.c/.h             # 界面总入口 + 控件句柄
-        ├── ui_events.c/.h      # 事件回调（本项目手写，非生成）
+        ├── ui.c/.h             # 界面总入口 + 控件句柄   ⚠ 生成物，别手改
+        ├── ui_events.h         # ⚠ 生成物，重导出会覆盖
+        ├── ui_events.c         # 事件回调（手写，不受重导出影响）
         ├── screens/            # 9 个页面
         ├── components/ fonts/ images/
         ├── filelist.txt        # SquareLine 源文件清单
         └── CMakeLists.txt
 ```
+
+### 分层约定
+
+改动前先确认改的是哪一层：
+
+| 层 | 目录 | 规矩 |
+| :--- | :--- | :--- |
+| 状态层 | `state/` | 只放跨模块的变量，模块内部的静态变量别往里搬。每个变量写清谁写谁读 |
+| 视图层 | `view/` | **只有这里能调 `lv_xxx`**。任务和业务模块改界面一律调 `ui_view_*()` |
+| 任务层 | `tasks/` | 只负责"什么时候反复调一次"，逻辑在业务模块里 |
+| 硬件层 | `screen` `sd_card` | 驱动和移植，不掺业务 |
+| 业务层 | `My_*` `weather` | 只管自己的事，不碰控件、不 include `ui/ui.h` |
+
+两个容易踩的点：
+
+1. **`src/ui/` 下的文件是 SquareLine 生成的**（`ui.h`/`ui.c`/`ui_helpers.*`/`screens/`/`fonts/`/`images/`/`ui_events.h`）。工程里 `uiExportFolderPath` 写死了这个路径，所以**目录不能改**。手写的东西一律放外面。
+
+2. **`ui_events.h` 每次导出都会被整个重写**，内容只保留 SquareLine 工程
+   Events 面板里配过的回调声明（`Game_yang`、`Keyboard_Show`、`switch_xiaozhi_cb`
+   这些）。里面另外手写过的声明（`music_page_on_show`、`music_on_card_recovered`
+   之类）导出后就没了 —— 现在没人引用它们，丢了也不影响编译，但**以后要在别处
+   调一个没在 Events 面板注册过的回调时，得把声明挪到 `view/` 下的手写头文件**，
+   否则每次导出都要重新补一遍。
 
 ### 依赖库
 
