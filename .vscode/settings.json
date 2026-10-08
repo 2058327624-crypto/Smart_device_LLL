@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "*.h": "cpp"
+    },
+    "C_Cpp.errorSquiggles": "disabled",
+    "cmake.sourceDirectory": "D:/Smart_device_LLL/src/ui"
+}
